@@ -41,7 +41,7 @@ goto :EOF
 :: U: a url
 ::
 :: Examples:
-::     call svnlib :canReachRemoteSvn "https://github.com/tiefeand/cmd"
+::     call svnlib :canReachRemoteSvn "https://server/svn/subpath"
 
 :: NOT IMPLEMENTED
 goto :EOF
@@ -57,11 +57,11 @@ goto :EOF
 :: P: an accessible path
 ::
 :: Examples:
-::     call svnlib :isSvnCheckout "C:\Repo\cmd"
+::     call svnlib :isSvnCheckout "C:\Repo\subpath"
 
 setlocal
 for %%i in ("%~1\.svn") do if not exist %%~si\NUL (call base :false) else (call base :true)
-if %ERRORLEVEL% NEQ 0 (echo."ERROR: Not an svn checkout")
+rem if %ERRORLEVEL% NEQ 0 (echo."ERROR: Not an svn checkout")
 
 :: ALTERNATIVELY -----------------------------------------------
 :: check by accessing server information 
@@ -87,17 +87,41 @@ goto :EOF
 ::
 :: Examples:
 ::     set "URL=
-::     call svnlib :retrieveSvnRemoteUrl "C:\Repo\cmd" URL
+::     call svnlib :retrieveSvnRemoteUrl "C:\Repo\subpath" URL
 
 setlocal
-for /f "tokens=*" %%a in ('svn info --show-item repos-root-url %~1') do set "svnurl=%%~a"
+for /f "tokens=*" %%a in ('svn info --show-item repos-root-url %~1') do set "$svnurl=%%~a"
 
-if defined svnurl (call base :true) else (call base :false)
-if not defined svnurl (echo."ERROR: Not an svn repo or checkout")
+if defined $svnurl (call base :true) else (call base :false)
+if not defined $svnurl (echo."ERROR: Not an svn repo or checkout")
 
 (endlocal & rem return values
-    if "%~2" NEQ "" (set %~2=%svnurl%) else (echo.%svnurl%)
+    if "%~2" NEQ "" (set %~2=%$svnurl%) else (echo.%$svnurl%)
 )
+goto :EOF
+
+
+::------------------------------------------------------------------------------
+:svnUpdateOrCheckout
+:: Checks out if there is no working copy otherwise updates the working copy
+::
+::     call svnlib :svnUpdateOrCheckout %U% %P%
+::
+:: U: an accessible url
+:: P: the local path to which to check out
+::
+:: Examples:
+::     call svnlib :svnUpdateOrCheckout "https://server/svn/subpath"
+::     call svnlib :svnUpdateOrCheckout "https://server/svn/subpath" "C:\Repo\subpath"
+setlocal
+set $svnChkOutPath=%~2
+call svnlib :isSvnCheckout "%$svnChkOutPath%" 
+if %ERRORLEVEL% EQU 0 (
+	svn update %$svnChkOutPath%
+) else (
+    svn co %~1 %$svnChkOutPath%
+)
+endlocal
 goto :EOF
 
 
@@ -112,8 +136,8 @@ goto :EOF
 :: P: an accessible path
 ::
 :: Examples:
-::     call svnlib :svnGracefulCheckout "https://svn/cmd"
-::     call svnlib :svnGracefulCheckout "https://svn/cmd" "C:\Repo\cmd"
+::     call svnlib :svnGracefulCheckout "https://server/svn/subpath"
+::     call svnlib :svnGracefulCheckout "https://server/svn/subpath" "C:\Repo\subpath"
 
 setlocal
 call svnlib :canReachRemoteSvn "%~1"
@@ -134,7 +158,7 @@ goto :EOF
 :: P: an accessible path
 ::
 :: Examples:
-::     call svnlib :svnGracefulCleanup "C:\Repo\cmd"
+::     call svnlib :svnGracefulCleanup "C:\Repo\subpath"
 
 setlocal
 call svnlib :canReachRemoteSvn "%~1"
@@ -156,7 +180,7 @@ goto :EOF
 :: P: an accessible path
 ::
 :: Examples:
-::     call svnlib :svnGracefulUpdate "C:\Repo\cmd"
+::     call svnlib :svnGracefulUpdate "C:\Repo\subpath"
 
 setlocal
 call svnlib :canReachRemoteSvn "%~1"
