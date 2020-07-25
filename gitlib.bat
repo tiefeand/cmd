@@ -82,12 +82,11 @@ goto :EOF
 ::     call gitlib :gitPullOrClone "https://github.com/tiefeand/cmd" "C:\Repo\subpath"
 :gitPullOrClone
 setlocal
-set $gitLocalPath=%~2
-call gitlib :isLocalGitRepo "%$gitLocalPath%" 
+call gitlib :isLocalGitRepo "%~2" 
 if %ERRORLEVEL% EQU 0 (
-	git pull "%$gitLocalPath%"
+	git pull "%~2"
 ) else (
-    git clone "%~1" "%$gitLocalPath%"
+    git clone "%~1" "%~2"
 )
 endlocal
 goto :EOF

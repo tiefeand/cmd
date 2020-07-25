@@ -114,12 +114,11 @@ goto :EOF
 ::     call svnlib :svnUpdateOrCheckout "https://server/svn/subpath"
 ::     call svnlib :svnUpdateOrCheckout "https://server/svn/subpath" "C:\Repo\subpath"
 setlocal
-set $svnChkOutPath=%~2
-call svnlib :isSvnCheckout "%$svnChkOutPath%" 
+call svnlib :isSvnCheckout "%~2" 
 if %ERRORLEVEL% EQU 0 (
-	svn update %$svnChkOutPath%
+	svn update "%~2"
 ) else (
-    svn co "%~1" %$svnChkOutPath%
+    svn co "%~1" "%~2"
 )
 endlocal
 goto :EOF

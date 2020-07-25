@@ -42,7 +42,7 @@ but do
     SET "$var="
 ```
 
-In favor of a most generic scripting use quotation marks (like `$var="one & two"`) for all [hardcoded] variable definitions that do contain spaces if these variables reside at the top level of a input script. 
+In favor of a most generic scripting use quotation marks (like `$var="one & two"`) for all **hardcoded** variable definitions that do contain spaces if these variables reside at the top level of a input script. 
 ``` cmd
     SET $var="a hardcoded input value at the level of a top level input script"
 ```
@@ -52,23 +52,23 @@ This rule does apply as a general rule for all set parameters such as dynamic as
     SET $var=%~2
     SET $var=%2
 ```
-Whilest you should never put quotation marks around a parameter where any potential existing quotation marks were not first removed. Thus do never write `SET $var="%2"` such as you should not do `SET $var="%ANY_EARLIER_DEFINED_PARAMETER%"` either, as this potentially leads to double quotes.
+Whilest you should never put quotation marks around a parameter where any potential existing quotation marks were not first removed. Thus do never write ~~`SET $var="%2"`~~ such as you should not do ~~`SET $var="%ANY_EARLIER_DEFINED_PARAMETER%"`~~ either, as this potentially leads to double quotes.
 
 #### Other extended use of the `set` command
-1. To reveal all currently set environmnet variables, simply type:
+11. To reveal all currently set environmnet variables, simply type:
 ``` cmd
     SET
 ```
-2. To reveal a subset such as all variables starting with P use
+12. To reveal a subset such as all variables starting with P use
 ``` cmd
     SET P
 ```
-3. Use the following form to do basic integer arithmetic
+13. Use the following form to do basic integer arithmetic
 ``` cmd
     SET /a $x=20
     SET /a $x=3*$x
 ```
-4. Use the following in order to set a variable equal to a user input. Then text 
+14. Use the following in order to set a variable equal to a user input. Then text 
 written will be shown as prompt string before user input
 ``` cmd
     SET /p $var=Please enter some text
@@ -81,7 +81,7 @@ Example:
     If /i "%$dept%"=="hr" GOTO sub_hr
     GOTO :EOF
 ```
-5. If a variable is set to nothing in which case it will be considered as not defined
+15. If a variable is set to nothing in which case it will be considered as not defined
 ``` cmd
     SET "$var="
     IF NOT DEFINED $var (ECHO "not defined")
@@ -224,7 +224,7 @@ Example: list the contents of `c:\demo` with the full path of each file
 ``` cmd
     CALL :someFunction 100,200
     CALL :someFunction 100 200
-    CALL :someFunction 100 "a string with spaces wrapped into quotation marks is passed as one single parameter"
+    CALL :someFunction 100 "string with spaces in quotation marks is passed as one single parameter"
 ```
 
 ---
@@ -243,7 +243,7 @@ Use `SETLOCAL` and `ENDLOCAL`
 ---
 
 ### Pass variable by data
-To pass variables by data (rather than by reference) expand variables before passing them using the `%`. Wrap variables that are passed as parameters into `"` to avoid false parameter mapping on behalf of spaces. Not that although this will eventually lead to double quotes in case a parameter already has `"` in its value this will be counteracted by generally applying thr rule 4 below.
+To pass variables by data (rather than by reference) expand variables before passing them using the `%`. Wrap variables that are passed as parameters into `"` to avoid false parameter mapping on behalf of spaces. Not that although this will eventually lead to double quotes in case a parameter already has `"` in its value this will be counteracted by generally applying thr **rule 24** below.
 
 ``` cmd
     CALL :someFunction "%SOME_HARDCODED_VARIABLE%"
@@ -256,7 +256,7 @@ To pass by data (rather than by reference) expand variables before passing them 
     set SOME_HARDCODED_VARIABLE="This is a variable with spaces"
     CALL :someFunction %SOME_HARDCODED_VARIABLE%
 ```
-Do not wrap variables that are passed as parameters into `"` as this is prone to lead to double quotes (Thus do not write `CALL :someFunction "%SOME_HARDCODED_VARIABLE%"`). 
+Do not wrap variables that are passed as parameters into `"` as this is prone to lead to double quotes (Thus do not write ~~`CALL :someFunction "%SOME_HARDCODED_VARIABLE%"`~~). 
 Instead make sure to define hardcoded parameters alway with `"` if they have spaces (like `set SOME_HARDCODED_VARIABLE="This is a variable with spaces"`). 
 
 For dynamic parameter assignment first remove any potential quotation marks in case you wrap them in new ones or do not wrap them into quotation marks at all
@@ -267,7 +267,7 @@ For dynamic parameter assignment first remove any potential quotation marks in c
 ```
 
 Inside the body of the receiving function you may want to digest a passed variable value in one of either form:
-1. use `%1` in order to pass the variable onto yet anoter scripted function (thus keeping a any `"` around its value and thus making the call robust to spaces)
+21. use `%1` in order to pass the variable onto yet anoter scripted function (thus keeping a any `"` around its value and thus making the call robust to spaces)
 ``` cmd
     :someOuterFunction
     SETLOCAL
@@ -276,7 +276,7 @@ Inside the body of the receiving function you may want to digest a passed variab
     GOTO :EOF
 ```
 
-2. use `~` such as in %~1 in order to remove the `"`. 
+22. use `~` such as in %~1 in order to remove the `"`. 
 ``` cmd
     :someFunction
     SETLOCAL
@@ -289,7 +289,7 @@ Note that the following example fails if the destination folder thus the 'parame
     git clone %~1 %~2
 ```
 
-3. most commands (thus also 'git clone') accept `"` for the same reason as when you script your own function [1.]. So do not remove the `"` at the calling step if you don't need to. This keeps the call robust against inputs with spaces. The following example for instance allows the destination parameter `%2` to include spaces:
+23. most commands (thus also 'git clone') accept `"` for the same reason as when you script your own function **rule 21**. So do not remove the `"` at the calling step if you don't need to. This keeps the call robust against inputs with spaces. The following example for instance allows the destination parameter `%2` to include spaces:
 ``` cmd
     :someFunction
     SETLOCAL
@@ -301,7 +301,7 @@ Note that the following example fails if the destination folder thus the 'parame
 ```
 Note that `%1` and `"%~1"` leads into the same result if the content of the 'parameter one' had already `"`. But it leads to different results if the 'parameter one' did not have `"`.
 
-4. to be in control of how parameter values are formated (no matter how a client is calling your function) use the form `"%~1"` before using `%1`. Meaning: In case a parameters value contains `"` remove them and add them again. In case it doesn't contain `"` add them too. i.o.w. it enforces the parameter always having `"`.
+24. to be in control of how parameter values are formated (no matter how a client is calling your function) use the form `"%~1"` before using `%1`. Meaning: In case a parameters value contains `"` remove them and add them again. In case it doesn't contain `"` add them too. i.o.w. it enforces the parameter always having `"`.
 ``` cmd
     :someFunction
     SETLOCAL
@@ -320,9 +320,9 @@ Note that `%1` and `"%~1"` leads into the same result if the content of the 'par
     CALL :someFunction %SOME_PARAMETER%
 ```
 
-5. vice versa to 4. do never wrapp parameters into `"` without using the `~`. Otherwise you risk having double quotes like this `""any text""`. Thus do not do `"%1"`.
+25. vice versa to **rule 24** do never wrapp parameters into `"` without using the `~`. Otherwise you risk having double quotes like this `""any text""`. Thus do not do ~~`"%1"`~~.
 
-6. use `%*` in case you like to use all parameters beyond `%0`, thus as if you would write `%1 %2 %3`, ...
+26. use `%*` in case you like to use all parameters beyond `%0`, thus as if you would write `%1 %2 %3`, ...
 ``` cmd
     :someFunction
     SETLOCAL
@@ -335,7 +335,7 @@ Note that `%1` and `"%~1"` leads into the same result if the content of the 'par
 
 ### Pass variable by reference
 To pass a variable by reference pass the variable name wihout expanding it. Thus
-Use `$var` not `%$var%`
+Use `$var` not ~~`%$var%`~~
 ``` cmd
     "SET $var="
     CALL :someFunction var
