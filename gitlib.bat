@@ -44,7 +44,7 @@ goto :EOF
 ::     call gitlib :canReachRemoteGit "https://github.com/tiefeand/cmd"
 
 setlocal
-git ls-remote -h %~1
+git ls-remote -h "%~1"
 endlocal
 goto :EOF
 
@@ -85,9 +85,9 @@ setlocal
 set $gitLocalPath=%~2
 call gitlib :isLocalGitRepo "%$gitLocalPath%" 
 if %ERRORLEVEL% EQU 0 (
-	git pull %$gitLocalPath%
+	git pull "%$gitLocalPath%"
 ) else (
-    git clone %~1 %$gitLocalPath%
+    git clone "%~1" "%$gitLocalPath%"
 )
 endlocal
 goto :EOF
@@ -110,7 +110,7 @@ goto :EOF
 setlocal
 call gitlib :canReachRemoteGit "%~1"
 if %ERRORLEVEL% EQU 0 (
-    git clone %~1 %~2
+    git clone "%~1" "%~2"
 )
 endlocal
 goto :EOF
@@ -132,7 +132,7 @@ setlocal
 call gitlib :canReachRemoteGit "%~1"
 call gitlib :isLocalGitRepo "%~1"
 if %ERRORLEVEL% EQU 0 (
-    git pull %~1
+    git pull "%~1"
 )
 endlocal
 goto :EOF

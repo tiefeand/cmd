@@ -90,7 +90,7 @@ goto :EOF
 ::     call svnlib :retrieveSvnRemoteUrl "C:\Repo\subpath" URL
 
 setlocal
-for /f "tokens=*" %%a in ('svn info --show-item repos-root-url %~1') do set "$svnurl=%%~a"
+for /f "tokens=*" %%a in ('svn info --show-item repos-root-url "%~1"') do set "$svnurl=%%~a"
 
 if defined $svnurl (call base :true) else (call base :false)
 if not defined $svnurl (echo."ERROR: Not an svn repo or checkout")
@@ -119,7 +119,7 @@ call svnlib :isSvnCheckout "%$svnChkOutPath%"
 if %ERRORLEVEL% EQU 0 (
 	svn update %$svnChkOutPath%
 ) else (
-    svn co %~1 %$svnChkOutPath%
+    svn co "%~1" %$svnChkOutPath%
 )
 endlocal
 goto :EOF
@@ -142,7 +142,7 @@ goto :EOF
 setlocal
 call svnlib :canReachRemoteSvn "%~1"
 if %ERRORLEVEL% EQU 0 (
-    svn co %~1 %~2
+    svn co "%~1" "%~2"
 )
 endlocal
 goto :EOF
@@ -164,7 +164,7 @@ setlocal
 call svnlib :canReachRemoteSvn "%~1"
 call svnlib :isSvnCheckout "%~1"
 if %ERRORLEVEL% EQU 0 (
-    svn cleanup %~1
+    svn cleanup "%~1"
 )
 endlocal
 goto :EOF
@@ -186,7 +186,7 @@ setlocal
 call svnlib :canReachRemoteSvn "%~1"
 call svnlib :isSvnCheckout "%~1"
 if %ERRORLEVEL% EQU 0 (
-    svn update %~1
+    svn update "%~1"
 )
 endlocal
 goto :EOF

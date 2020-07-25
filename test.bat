@@ -10,16 +10,17 @@
 ::------------------------------------------------------------------------------
 set $unique_folder=%TEMP%\test%RANDOM%
 
-set $not_an_svn_co_path=%$unique_folder%\gitco
-set $valid_svn_co_path=%$unique_folder%\svnco
+set $not_an_svn_co_path="%$unique_folder%\git co"
+set $valid_svn_co_path="%$unique_folder%\svn co"
 set $invalid_svn_url="https://ch1svn1/svn/NotExist" 
 set $valid_accessible_svn_url="https://ch1svn1/svn/Test"
+rem https://ch1svn1/svn/Testing/VAV Labor/Altium Designer
 
 rem ping %$valid_accessible_svn_url%
 ping ch1svn1
 
-set $not_an_git_co_path=%$unique_folder%\svnco
-set $valid_git_co_path=%$unique_folder%\gitco
+set $not_an_git_co_path="%$unique_folder%\svn co"
+set $valid_git_co_path="%$unique_folder%\git co"
 set $invalid_git_url="https://github.com/tiefeand/notExist" 
 set $valid_accessible_git_url="https://github.com/tiefeand/cmd"
 
