@@ -15,21 +15,23 @@ set $valid_svn_co_path=%$unique_folder%\svnco
 set $invalid_svn_url="https://ch1svn1/svn/NotExist" 
 set $valid_accessible_svn_url="https://ch1svn1/svn/Test"
 
-ping $valid_accessible_svn_url
-
+rem ping %$valid_accessible_svn_url%
+ping ch1svn1
 
 set $not_an_git_co_path=%$unique_folder%\svnco
 set $valid_git_co_path=%$unique_folder%\gitco
 set $invalid_git_url="https://github.com/tiefeand/notExist" 
 set $valid_accessible_git_url="https://github.com/tiefeand/cmd"
 
-ping %$valid_accessible_git_url%
+rem ping %$valid_accessible_git_url%
+ping www.github.com
 
 svn co %$valid_accessible_svn_url% %$valid_svn_co_path%
 git clone %$valid_accessible_git_url% %$valid_git_co_path%
 
 start %$unique_folder%\
-echo Before continuing, verify that there are folders 'svnco' and 'gitco' with checkouts in it. Then press ENTER
+echo Before continuing, verify that there are folders 'svnco' and 'gitco' 
+echo containing checkouts in it. Then press ENTER
 pause
 
 ::------------------------------------------------------------------------------
@@ -89,7 +91,7 @@ echo ---------------------------------------------------------------------------
 rem Test case: url does not exists or is not a accessible svn URL 
 setlocal
 set $svnurl=
-call svnlib :svnUpdateOrCheckout %$invalid_svn_url% %$unique_folder%\should_not_persist10
+call svnlib :svnUpdateOrCheckout %$invalid_svn_url% %$unique_folder%\test_failure_if_this_persists_svnUpdateOrCheckout
 echo $svnurl: expected: [empty], effective: %$svnurl%
 echo ERRORLEVEL: expected: 1, effective: %ERRORLEVEL%
 endlocal
@@ -97,7 +99,7 @@ echo ---------------------------------------------------------------------------
 rem Test case: url exists and is a valid accessible svn URL 
 setlocal
 set $svnurl=
-call svnlib :svnUpdateOrCheckout %$valid_accessible_svn_url% %$unique_folder%\test11
+call svnlib :svnUpdateOrCheckout %$valid_accessible_svn_url% %$unique_folder%\test_svnUpdateOrCheckout
 echo $svnurl: expected: %$valid_accessible_svn_url%, effective: %$svnurl%
 echo ERRORLEVEL: expected: 0, effective: %ERRORLEVEL%
 endlocal
@@ -107,11 +109,11 @@ echo ***************************************************************************
 echo * svnGracefulCheckout
 echo ***************************************************************************
 rem Test case: url does not exists or is not a accessible svn URL 
-call svnlib :svnGracefulCheckout %$invalid_svn_url% %$unique_folder%\should_not_persist12
+call svnlib :svnGracefulCheckout %$invalid_svn_url% %$unique_folder%\test_failure_if_this_persists_svnGracefulCheckout
 echo ERRORLEVEL: expected: 1, effective: %ERRORLEVEL%
 echo ---------------------------------------------------------------------------
 rem Test case: url exists and is a valid accessible svn URL 
-call svnlib :svnGracefulCheckout %$valid_accessible_svn_url% %$unique_folder%\test13
+call svnlib :svnGracefulCheckout %$valid_accessible_svn_url% %$unique_folder%\test_svnGracefulCheckout
 echo ERRORLEVEL: expected: 0, effective: %ERRORLEVEL%
 echo.
 
@@ -179,7 +181,7 @@ echo ---------------------------------------------------------------------------
 rem Test case: url does not exists or is not a accessible git URL 
 setlocal
 set $giturl=
-call gitlib :gitPullOrClone %$invalid_git_url% %$unique_folder%\should_not_persist20
+call gitlib :gitPullOrClone %$invalid_git_url% %$unique_folder%\test_failure_if_this_persists_gitPullOrClone
 echo $giturl: expected: [empty], effective: %$giturl%
 echo ERRORLEVEL: expected: 128, effective: %ERRORLEVEL%
 endlocal
@@ -187,7 +189,7 @@ echo ---------------------------------------------------------------------------
 rem Test case: url exists and is a valid accessible git URL 
 setlocal
 set $giturl=
-call gitlib :gitPullOrClone %$valid_accessible_git_url% %$unique_folder%\test21
+call gitlib :gitPullOrClone %$valid_accessible_git_url% %$unique_folder%\test_gitPullOrClone
 echo $giturl: expected: %$valid_accessible_git_url%, effective: %$giturl%
 echo ERRORLEVEL: expected: 0, effective: %ERRORLEVEL%
 endlocal
@@ -197,11 +199,11 @@ echo ***************************************************************************
 echo * gitGracefulClone
 echo ***************************************************************************
 rem Test case: url does not exists or is not a accessible git URL 
-call gitlib :gitGracefulClone %$invalid_git_url% %$unique_folder%\should_not_persist22
+call gitlib :gitGracefulClone %$invalid_git_url% %$unique_folder%\test_failure_if_this_persists_gitGracefulClone
 echo ERRORLEVEL: expected: 128, effective: %ERRORLEVEL%
 echo ---------------------------------------------------------------------------
 rem Test case: url exists and is a valid accessible git URL 
-call gitlib :gitGracefulClone %$valid_accessible_git_url% %$unique_folder%\test23
+call gitlib :gitGracefulClone %$valid_accessible_git_url% %$unique_folder%\test_gitGracefulClone
 echo ERRORLEVEL: expected: 0, effective: %ERRORLEVEL%
 echo.
 
