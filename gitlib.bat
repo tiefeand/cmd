@@ -74,6 +74,56 @@ goto :EOF
 
 
 ::------------------------------------------------------------------------------
+:isUpToDate
+:: Elevates ERRORLEVEL if repository path %L% is not uptodate compared to its 
+:: remote. %R% may be a remote URL or a remote name such as registered. If not 
+:: provided the default (origin) will be taken. 'git remote -v'.
+::
+::     call gitlib :isUpToDate 
+::     call gitlib :isUpToDate %L% 
+::     call gitlib :isUpToDate %L% %R%
+::     call gitlib :isUpToDate %R%
+::
+:: L: the local repository path
+:: R: an accessible url or an accessable remote path containing a remote repository
+::
+::     call gitlib :isUpToDate
+::     call gitlib :isUpToDate "C:\Repo\local"
+::     call gitlib :isUpToDate "C:\Repo\local" "https://github.com/tiefeand/remote"
+::     call gitlib :isUpToDate "https://github.com/tiefeand/remote"
+
+setlocal
+
+endlocal
+goto :EOF
+
+
+::------------------------------------------------------------------------------
+:hasNewerTag
+:: Elevates ERRORLEVEL if repository path %L% has newer tag on its remote. %R% 
+:: may be a remote URL or a remote name such as registered 'git remote -v'.
+::
+::     call gitlib :hasNewerTag 
+::     call gitlib :hasNewerTag %L% 
+::     call gitlib :hasNewerTag %L% %R%
+::     call gitlib :hasNewerTag %R%
+::
+:: L: the local repository path
+:: R: an accessible url or an accessable remote path containing a remote repository
+::
+:: Examples:
+::     call gitlib :hasNewerTag
+::     call gitlib :hasNewerTag "C:\Repo\local"
+::     call gitlib :hasNewerTag "C:\Repo\local" "https://github.com/tiefeand/remote"
+::     call gitlib :hasNewerTag "https://github.com/tiefeand/remote"
+
+setlocal
+
+endlocal
+goto :EOF
+
+
+::------------------------------------------------------------------------------
 :gitPullOrClone
 :: Pulls in latest changes on a local repository. However there can be no pull if the 
 :: histories don't match or if the provided destination path does not contain any 
@@ -100,9 +150,9 @@ goto :EOF
 ::     call gitlib :gitPullOrClone %R%
 ::     call gitlib :gitPullOrClone %R% %L%
 ::
-:: If a remote %R% is provided it will only pull as long as the remote history on %R%
-:: is related to the local one. If the local path does not contain any repository yet
-:: it will clone the respective remote repository. 
+:: %R% may be a remote URL or a remote name such as registered. If not provided the 
+:: default (origin) will be taken. A pull will be performed if there is a local clone. 
+:: Otherwise it will create a new clone from the respective remote repository. 
 :: 
 :: If neither a pull nor a clone was successful on behalf of any of the above 
 :: scenarios, the %ERRORLEVEL% is raised and the local disk state remains unmodified.
