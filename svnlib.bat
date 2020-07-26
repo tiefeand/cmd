@@ -4,8 +4,8 @@ call:%*
 goto:EOF
 
 ::------------------------------------------------------------------------------
-:: This library extends the svn utility with additional convinience functions.
-:: For bare gsvnit functionality use svn command line directly. 
+:: This library extends the svn utility with additional convenience functions.
+:: For bare svn functionality use svn command line directly. 
 :: Type 'svn --help' for more information
 ::------------------------------------------------------------------------------
 
@@ -49,18 +49,22 @@ goto :EOF
 
 ::------------------------------------------------------------------------------
 :isSvnCheckout
-:: Elevates ERRORLEVEL if path is not an svn checkout. Note that unlike
-:: :canReachRemoteSvn this will also return ERRORLEVEL = 0 if machine is offline
+:: Elevates ERRORLEVEL if path %P% is not an svn checkout. Note that the ERRORLEVEL
+:: is 0 even if a connection to the server is down. If no path %P% is provided
+:: the current directory %CD% is used.
 ::
+::     call svnlib :isSvnCheckout
 ::     call svnlib :isSvnCheckout %P%  
 ::
 :: P: an accessible path
 ::
 :: Examples:
+::     call svnlib :isSvnCheckout
 ::     call svnlib :isSvnCheckout "C:\Repo\subpath"
 
 setlocal
-for %%i in ("%~1\.svn") do if not exist %%~si\NUL (call base :false) else (call base :true)
+if "%~1" EQU "" (set folderpath=%CD%) else (set folderpath=%~1)
+for %%i in ("%folderpath%\.svn") do if not exist %%~si\NUL (call base :false) else (call base :true)
 rem if %ERRORLEVEL% NEQ 0 (echo."ERROR: Not an svn checkout")
 
 :: ALTERNATIVELY -----------------------------------------------
@@ -103,22 +107,49 @@ goto :EOF
 
 ::------------------------------------------------------------------------------
 :svnUpdateOrCheckout
-:: Checks out if there is no working copy otherwise updates the working copy
-::
-::     call svnlib :svnUpdateOrCheckout %U% %P%
+:: Updates a working copy if on a local path. However there can be no update if
+:: the provided destination path does not contain any working copy yet. When the 
+:: update was unsuccessful and the destination path is empty and a provided 
+:: remote url is valid and accessible a checkout will be performed. Consider 
+:: various use cases with using either or both of the below parameters:
 ::
 :: U: an accessible url
 :: P: the local path to which to check out
 ::
+:: 1.
+::     call svnlib :svnUpdateOrCheckout
+::     call svnlib :svnUpdateOrCheckout %L%
+::
+:: Updates a checkout if one resides under a given path %P%. If no path %P% is 
+:: provided the update will be applied on the current directory (%CD%)
+::
+:: 2.
+::     call svnlib :svnUpdateOrCheckout %R%
+::     call svnlib :svnUpdateOrCheckout %R% %L%
+::
+:: If a remote url %R% is provided a check-out will be performed as long as the 
+:: local path is yet empty. 
+:: 
+:: If neither an update nor a check-out was successful on behalf of any of the above 
+:: scenarios, the %ERRORLEVEL% is raised and the local disk state remains unmodified.
+::
 :: Examples:
+::     call svnlib :svnUpdateOrCheckout "C:\Checkout\local"
 ::     call svnlib :svnUpdateOrCheckout "https://server/svn/subpath"
-::     call svnlib :svnUpdateOrCheckout "https://server/svn/subpath" "C:\Repo\subpath"
+::     call svnlib :svnUpdateOrCheckout "https://server/svn/subpath" "C:\Checkout\local"
+
 setlocal
-call svnlib :isSvnCheckout "%~2" 
+if "%~1" EQU "" (set "$first=") else (set $first=%1)
+if "%~2" EQU "" (set "$second=") else (set $second=%2)
+call svnlib :isSvnCheckout "%~1"
 if %ERRORLEVEL% EQU 0 (
-	svn update "%~2"
+    rem :svnUpdateOrCheckout
+    rem :svnUpdateOrCheckout %L%
+    svn update %$first%
 ) else (
-    svn co "%~1" "%~2"
+    rem :svnUpdateOrCheckout %R%
+    rem :svnUpdateOrCheckout %R% %L%
+    svn co %$first% %$second%
 )
 endlocal
 goto :EOF
@@ -141,7 +172,7 @@ goto :EOF
 setlocal
 call svnlib :canReachRemoteSvn "%~1"
 if %ERRORLEVEL% EQU 0 (
-    svn co "%~1" "%~2"
+    svn co %1 %2
 )
 endlocal
 goto :EOF
@@ -163,7 +194,7 @@ setlocal
 call svnlib :canReachRemoteSvn "%~1"
 call svnlib :isSvnCheckout "%~1"
 if %ERRORLEVEL% EQU 0 (
-    svn cleanup "%~1"
+    svn cleanup %1
 )
 endlocal
 goto :EOF
@@ -185,7 +216,7 @@ setlocal
 call svnlib :canReachRemoteSvn "%~1"
 call svnlib :isSvnCheckout "%~1"
 if %ERRORLEVEL% EQU 0 (
-    svn update "%~1"
+    svn update %1
 )
 endlocal
 goto :EOF

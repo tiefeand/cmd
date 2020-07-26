@@ -301,7 +301,7 @@ Note that the following example fails if the destination folder thus the 'parame
 ```
 Note that `%1` and `"%~1"` leads into the same result if the content of the 'parameter one' had already `"`. But it leads to different results if the 'parameter one' did not have `"`.
 
-24. to be in control of how parameter values are formated (no matter how a client is calling your function) use the form `"%~1"` before using `%1`. Meaning: In case a parameters value contains `"` remove them and add them again. In case it doesn't contain `"` add them too. i.o.w. it enforces the parameter always having `"`.
+24. to be in control of how parameter values are formated (no matter how a client is calling your function) use the form `"%~1"` before using `%1`. Meaning: In case a parameters value contains `"` remove them and add them again. In case it doesn't contain `"` add them too. i.o.w. it enforces the parameter always having `"`. Using `"%~1"` however also means that any empty parameter then will lead to an empty string `""`. In cases where this may be harmful you may either want to prefere `%1` or handle empty stings.
 ``` cmd
     :someFunction
     SETLOCAL
